@@ -1,0 +1,105 @@
+:root {
+	--background: #333;
+	--primary: #fff;
+	--primary-text: var(--background);
+	--record: #d33;
+}
+
+body {
+	width: 100%;
+	height: 100vh;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+}
+.icon {
+	width: 1em;
+	height: 1em;
+}
+.main {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+}
+.camera-select {
+	width: 100%;
+	height: 32px;
+}
+.preview-wrapper {
+  flex: 1;
+  overflow: hidden;
+  object-fit: cover;
+  position: relative;
+}
+.preview {
+  width: 100%;
+	height: 100%;
+  object-fit: cover;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.actions {
+	display: flex;
+	justify-items: space-between;
+	align-items: center;
+	background-color: var(--background);
+	justify-content: space-evenly;
+	padding: 1rem 0
+}
+.photo {
+  display: block;
+  color: var(--primary);
+	background: var(--primary);
+	box-shadow: 0 0 0 3px var(--primary-text), 0 0 0 6px var(--primary);
+	border-radius: 20rem;
+	border: 0;
+	width: 4rem;
+	height: 4rem;
+	font-weight: bold;
+  font-size: 2rem;
+  padding: 0;
+	position: relative;
+	margin: 0 2rem
+}
+.photo svg {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.video {
+  display: block;
+  color: #fff;
+	background: var(--record);
+	border-radius: 20rem;
+	border: 0;
+	width: 3rem;
+	height: 3rem;
+	font-weight: bold;
+  font-size: 2rem;
+  padding: 0;
+	position: relative;
+}
+.video svg {
+	fill: currentColor;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+}
+
+#latest-image-wrapper{
+	width: 4rem;
+	height: 4rem;
+	border-radius: .5rem;
+	overflow: hidden;
+}
+#latest-image {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
