@@ -1,6 +1,9 @@
-let dirHandle;
 let hasFileAccess = false;
+let dirHandle;
 let activeVideoStream;
+
+let cameraDevices = [];
+let currentCameraIndex = 0;
 
 function runAsync(asnycFunction) {
 	asnycFunction().catch(console.error);
@@ -18,9 +21,10 @@ async function capturePhoto() {
 async function saveCapture(imageBlob) {
 	if (!hasFileAccess) {
 		dirHandle = await showDirectoryPicker();
+		hasFileAccess = true;
 	}
 	const now = new Date();
-	const filename = `webimage_${now.getFullYear()}_${now.getMonth() + 1}_${
+	const filename = `pwcamera-${now.getFullYear()}_${now.getMonth() + 1}_${
 		now.getDate() - 1
 	}-${now.getHours()}_${now.getMinutes()}_${now.getSeconds()}.png`;
 	const fileHandle = await dirHandle.getFileHandle(filename, { create: true });
@@ -45,41 +49,47 @@ async function onCapturePhotoClick(e) {
 	});
 
 	return false;
-};
+}
 document.getElementById("save").addEventListener("click", onCapturePhotoClick);
 
-var videoElement = document.querySelector("video");
-var videoSelect = document.querySelector("select#videoSource");
-videoSelect.onchange = updateCameraSelection;
+const videoElement = document.querySelector("video");
+const switchCamera = document.querySelector("#next-camera");
 
-runAsync(async () => {
-	await updateCameraOptions();
-	await updateCameraSelection();
-});
-
-async function updateCameraOptions() {
+async function updateAvailableCameraDevices() {
 	const mediaDevices = await navigator.mediaDevices.enumerateDevices();
-	const cameraDevices = mediaDevices.filter(
-		(device) => device.kind === "videoinput"
-	);
-	cameraDevices.forEach((camera, index) => {
-		const optionElement = document.createElement("option");
-		optionElement.value = camera.deviceId;
-		optionElement.text = camera.label || `Camera ${index + 1}`;
-		videoSelect.appendChild(optionElement);
-	});
+	cameraDevices = mediaDevices.filter((device) => device.kind === "videoinput");
 }
 
-async function stopActiveVideoStream() {
+async function stopActiveVideoTrack() {
 	if (activeVideoStream) {
 		activeVideoStream.getTracks().forEach((track) => track.stop());
 	}
 }
-async function updateCameraSelection() {
-	stopActiveVideoStream();
-	const newCameraDeviceId = videoSelect.value;
-	const activeVideoStream = await navigator.mediaDevices.getUserMedia({
+async function updateActiveCameraPreview() {
+	const newCameraDeviceId = cameraDevices[currentCameraIndex].deviceId;
+	activeVideoStream = await navigator.mediaDevices.getUserMedia({
 		video: { deviceId: { exact: newCameraDeviceId } },
 	});
 	videoElement.srcObject = activeVideoStream;
 }
+
+async function updateActiveCameraSelection() {
+	currentCameraIndex = (currentCameraIndex + 1) % cameraDevices.length;
+	switchCamera.innerHTML = (currentCameraIndex + 1).toString();
+	await stopActiveVideoTrack();
+	await updateActiveCameraPreview();
+}
+
+runAsync(async () => {
+	await updateAvailableCameraDevices();
+	await updateActiveCameraPreview();
+});
+
+switchCamera.addEventListener("click", (event) => {
+	event.preventDefault();
+	event.stopPropagation();
+
+	runAsync(updateActiveCameraSelection);
+
+	return false;
+});
