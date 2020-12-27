@@ -12,26 +12,14 @@
 		<meta itemprop="image" content="/icons/icon_192.png" />
 		<meta id="theme-color" name="theme-color" content="#fff" />
 		<link rel="icon" href="/icons/icon_192.png" />
-		<link rel="manifest" href="manifest.json">
+		<link rel="manifest" href="manifest.json" />
 
 		<link rel="stylesheet" href="/style.css" />
 		<script async src="/main.js"></script>
 		<script>
 			if ("serviceWorker" in navigator) {
 				window.addEventListener("load", function () {
-					navigator.serviceWorker.register("/service-worker.js").then(
-						function (registration) {
-							// Registration was successful
-							console.log(
-								"ServiceWorker registration successful with scope: ",
-								registration.scope
-							);
-						},
-						function (err) {
-							// registration failed :(
-							console.error("ServiceWorker registration failed: ", err);
-						}
-					);
+					navigator.serviceWorker.register("/service-worker.js");
 				});
 			}
 		</script>
@@ -52,21 +40,8 @@
 					/>
 				</article>
 				<button id="save" type="button" class="photo">
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						viewBox="0 0 24 24"
-						class="icon"
-					>
-						<path d="M0 0h24v24H0V0z" fill="none" />
-						<circle cx="12" cy="12" r="3" />
-						<path
-							d="M20 4h-3.17l-1.24-1.35c-.37-.41-.91-.65-1.47-.65H9.88c-.56 0-1.1.24-1.48.65L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-8 13c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"
-						/>
-					</svg>
 				</button>
-				<button id="next-camera" type="button" class="next-camera">
-					1
-				</button>
+				<button id="next-camera" type="button" class="next-camera">1</button>
 			</div>
 		</main>
 	</body>

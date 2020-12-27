@@ -1,21 +1,4 @@
-var CACHE_NAME = "pwcamera-v1.0.0";
-var urlsToCache = [
-	"/",
-	"/style.css",
-	"/main.js",
-	"icons/icon_72.png",
-	"icons/icon_96.png",
-	"icons/icon_144.png",
-	"icons/icon_192.png",
-];
-
-self.addEventListener("install", function (event) {
-	event.waitUntil(
-		caches.open(CACHE_NAME).then(function (cache) {
-			return cache.addAll(urlsToCache);
-		})
-	);
-});
+const CACHE_NAME = "pwcamera-v1.0.0";
 
 self.addEventListener("activate", function (event) {
 	event.waitUntil(
@@ -33,11 +16,16 @@ self.addEventListener("activate", function (event) {
 
 self.addEventListener("fetch", function (event) {
 	event.respondWith(
-		caches.match(event.request).then(function (response) {
-			if (response) {
-				return response;
-			}
-			return fetch(event.request);
+		caches.open(CACHE_NAME).then(function (cache) {
+			return cache.match(event.request).then(function (response) {
+				return (
+					response ||
+					fetch(event.request).then(function (response) {
+						cache.put(event.request, response.clone());
+						return response;
+					})
+				);
+			});
 		})
 	);
 });

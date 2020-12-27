@@ -3,6 +3,8 @@
 	--primary: #fff;
 	--primary-text: var(--background);
 	--record: #d33;
+	--focus: #29f;
+	--border-width: .3rem;
 }
 
 html, body, button {
@@ -27,7 +29,6 @@ body {
 .main {
 	width: 100%;
 	display: flex;
-	flex-direction: column;
 	flex: 1;
 }
 .preview-wrapper {
@@ -47,36 +48,18 @@ body {
 .actions {
 	display: flex;
 	align-items: center;
-	background-color: var(--background);
-	justify-content: space-evenly;
-	padding: 1rem 0;
+	justify-content: space-between;
+	padding: 1.5rem;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
 }
 .photo {
+	--border-offset: -.6rem;
+	--border: var(--border-width) solid #fff;
 	display: block;
-	color: var(--primary);
-	background: var(--primary);
-	box-shadow: 0 0 0 3px var(--primary-text), 0 0 0 6px var(--primary);
-	border-radius: 20rem;
-	border: 0;
-	width: 4rem;
-	height: 4rem;
-	font-weight: bold;
-	font-size: 2rem;
-	padding: 0;
-	position: relative;
-	margin: 0 2rem;
-}
-.photo svg {
-	position: absolute;
-	left: 50%;
-	top: 50%;
-	transform: translate(-50%, -50%);
-}
-
-.video {
-	display: block;
-	color: #fff;
-	background: var(--record);
+	background: #fff;
 	border-radius: 20rem;
 	border: 0;
 	width: 3rem;
@@ -84,8 +67,24 @@ body {
 	font-weight: bold;
 	font-size: 2rem;
 	padding: 0;
-	margin: 0.5rem;
 	position: relative;
+}
+.photo::before{
+	content: "";
+	position: absolute;
+	left: var(--border-offset);
+	right: var(--border-offset);
+	top: var(--border-offset);
+	bottom: var(--border-offset);
+	border: var(--border);
+	border-radius: inherit;
+}
+.photo:focus-visible {
+	outline: none;
+}
+
+.photo:focus-visible::before {
+	border-color: var(--focus)
 }
 
 .next-camera svg {
@@ -95,6 +94,7 @@ body {
 	top: 50%;
 	transform: translate(-50%, -50%);
 }
+
 .next-camera {
 	display: flex;
 	align-items: center;
@@ -112,6 +112,10 @@ body {
 	margin: 0.5rem;
 	position: relative;
 }
+.next-camera:focus-visible {
+	outline: none;
+	box-shadow: 0 0 0 var(--border-width) var(--focus);
+}
 
 #latest-image-wrapper {
 	width: 4rem;
@@ -123,4 +127,14 @@ body {
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
+}
+
+@media (orientation: landscape) {
+	.actions {
+		right: 0;
+		top: 0;
+		bottom: 0;
+		left: unset;
+		flex-direction: column-reverse;
+	}
 }
