@@ -1,4 +1,4 @@
-const CACHE_NAME = "pwcamera-v1.0.0";
+const CACHE_NAME = "pwcamera-v1.0.1";
 
 self.addEventListener("activate", function (event) {
 	event.waitUntil(
