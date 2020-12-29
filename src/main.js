@@ -27,6 +27,9 @@ async function takePhoto() {
 
 async function savePhoto(imageBlob) {
 	if (!hasFileAccess) {
+		if(!window.showDirectoryPicker){
+			alert("Sorry, your Browser does not support the FileAccess API that is required to save photos to your device.")
+		}
 		dirHandle = await showDirectoryPicker();
 		hasFileAccess = true;
 	}
@@ -60,17 +63,23 @@ async function onTakePhotoClick(e) {
 }
 
 async function updateAvailableCameraDevices() {
-	await navigator.mediaDevices.getUserMedia({
-		video: true,
-	});
+	if(!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices){
+		alert("Sorry, your browser doesn't support the used APIs. Consider updating.");
+	}
+	try{
+		await navigator.mediaDevices.getUserMedia({
+			video: true,
+		});
+	}catch(error){
+		alert("This is a camera app, you must allow camera access to use it.")
+	}
 	const mediaDevices = await navigator.mediaDevices.enumerateDevices();
 	cameraDevices = mediaDevices.filter((device) => device.kind === "videoinput");
-	console.log("1. updateAvailableCameraDevices", mediaDevices, cameraDevices);
 }
 
 async function stopActiveVideoTrack() {
 	if (activeVideoStream) {
-		activeVideoStream.getTracks().forEach((track) => track.stop());
+		await Promise.all(activeVideoStream.getTracks().map((track) => track.stop()));
 	}
 }
 async function updateActiveCameraPreview() {
