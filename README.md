@@ -21,3 +21,7 @@ I have also [written an article](https://medium.com/p/9bd7aeaf8550) about the te
 ## 🚧 Limitations
 
 - unfortunately it's currently impossible to set the cameras focus point because of browser-api limitations.
+
+## 🤖 Deployment
+
+To deploy a new version of this project, simply push a new commit to the main branch. But take care of updating the version in [./src/service-worker.js](./src/service-worker.js) because otherwise existing users wouldn't get the update because of the Cache first approach.

@@ -155,6 +155,18 @@ body {
 	object-fit: cover;
 }
 
+footer{
+	width: 100%;
+	color: #fff;
+	position: fixed;
+	top: 1em;
+	filter: drop-shadow(0 0 5px rgba(0,0,0,.5));
+	text-align: center;
+}
+footer a{
+	color: #fff;
+}
+
 @media (orientation: landscape) {
 	.actions {
 		right: 0;
