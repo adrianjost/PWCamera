@@ -1,3 +1,10 @@
+const previewVideo = document.getElementById("preview");
+const takePhotoBtn = document.getElementById("take-photo");
+const switchCameraBtn = document.getElementById("switch-camera");
+const cameraNumber = switchCameraBtn.querySelector(".camera-number");
+const latestPhotoBtn = document.getElementById("show-latest-photo");
+const latestPhotoImg = document.getElementById("latest-photo");
+
 let hasFileAccess = false;
 let dirHandle;
 let activeVideoStream;
@@ -9,7 +16,7 @@ function runAsync(asnycFunction) {
 	asnycFunction().catch(console.error);
 }
 
-async function capturePhoto() {
+async function takePhoto() {
 	const imageCapture = new ImageCapture(activeVideoStream.getVideoTracks()[0]);
 	const imageBlob = await imageCapture.takePhoto({
 		fillLightMode: "auto", // "off", "flash"
@@ -18,7 +25,7 @@ async function capturePhoto() {
 	return imageBlob;
 }
 
-async function saveCapture(imageBlob) {
+async function savePhoto(imageBlob) {
 	if (!hasFileAccess) {
 		dirHandle = await showDirectoryPicker();
 		hasFileAccess = true;
@@ -33,31 +40,32 @@ async function saveCapture(imageBlob) {
 	await writable.close();
 }
 
-function updateLastImgPreview(imageBlob) {
+function updateLastPhotoPreview(imageBlob) {
 	const imageUrl = URL.createObjectURL(imageBlob);
-	document.getElementById("latest-image").src = imageUrl;
+	latestPhotoImg.src = imageUrl;
+	latestPhotoBtn.setAttribute("tabindex", "3");
 }
 
-async function onCapturePhotoClick(e) {
+async function onTakePhotoClick(e) {
 	e.preventDefault();
 	e.stopPropagation();
 
 	runAsync(async () => {
-		const imageBlob = await capturePhoto();
-		updateLastImgPreview(imageBlob);
-		await saveCapture(imageBlob);
+		const imageBlob = await takePhoto();
+		updateLastPhotoPreview(imageBlob);
+		await savePhoto(imageBlob);
 	});
 
 	return false;
 }
-document.getElementById("save").addEventListener("click", onCapturePhotoClick);
-
-const videoElement = document.querySelector("video");
-const switchCamera = document.querySelector("#next-camera");
 
 async function updateAvailableCameraDevices() {
+	await navigator.mediaDevices.getUserMedia({
+		video: true,
+	});
 	const mediaDevices = await navigator.mediaDevices.enumerateDevices();
 	cameraDevices = mediaDevices.filter((device) => device.kind === "videoinput");
+	console.log("1. updateAvailableCameraDevices", mediaDevices, cameraDevices);
 }
 
 async function stopActiveVideoTrack() {
@@ -67,29 +75,30 @@ async function stopActiveVideoTrack() {
 }
 async function updateActiveCameraPreview() {
 	const newCameraDeviceId = cameraDevices[currentCameraIndex].deviceId;
+	if (newCameraDeviceId === "") {
+		alert("no camera found");
+	}
 	activeVideoStream = await navigator.mediaDevices.getUserMedia({
 		video: { deviceId: { exact: newCameraDeviceId } },
 	});
-	videoElement.srcObject = activeVideoStream;
+	previewVideo.srcObject = activeVideoStream;
 }
 
 async function updateActiveCameraSelection() {
 	currentCameraIndex = (currentCameraIndex + 1) % cameraDevices.length;
-	switchCamera.innerHTML = (currentCameraIndex + 1).toString();
+	cameraNumber.innerHTML = (currentCameraIndex + 1).toString();
 	await stopActiveVideoTrack();
 	await updateActiveCameraPreview();
 }
 
+takePhotoBtn.addEventListener("click", onTakePhotoClick);
+switchCameraBtn.addEventListener("click", (event) => {
+	event.preventDefault();
+	event.stopPropagation();
+	runAsync(updateActiveCameraSelection);
+	return false;
+});
 runAsync(async () => {
 	await updateAvailableCameraDevices();
 	await updateActiveCameraPreview();
-});
-
-switchCamera.addEventListener("click", (event) => {
-	event.preventDefault();
-	event.stopPropagation();
-
-	runAsync(updateActiveCameraSelection);
-
-	return false;
 });
