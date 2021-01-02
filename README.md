@@ -4,7 +4,7 @@
 
 A simple camera PWA to show the capabilities of the web.
 
-I have also [written an article](https://medium.com/p/9bd7aeaf8550) about the techniqued used here.
+I have also [written an article](https://medium.com/p/9bd7aeaf8550) about the techniques used here.
 
 ## 📖 Status
 
