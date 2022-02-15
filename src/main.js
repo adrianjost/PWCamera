@@ -19,8 +19,9 @@ function runAsync(asnycFunction) {
 async function takePhoto() {
 	const imageCapture = new ImageCapture(activeVideoStream.getVideoTracks()[0]);
 	const imageBlob = await imageCapture.takePhoto({
-		fillLightMode: "auto", // "off", "flash"
-		redEyeReduction: true,
+		// no options used because of incompatibility with some devices
+		// fillLightMode: "auto", // "off", "flash"
+		// redEyeReduction: true,
 	});
 	return imageBlob;
 }
